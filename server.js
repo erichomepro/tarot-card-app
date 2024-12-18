@@ -156,7 +156,7 @@ app.use((err, req, res, next) => {
 });
 
 // Get port from environment variable or use 3000 as default
-const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+let port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
 if (isNaN(port)) {
     console.error('Invalid PORT environment variable. Using default port 3000');
