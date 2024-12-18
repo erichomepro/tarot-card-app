@@ -108,8 +108,10 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: 'Something broke!' });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-    console.log(`Environment: ${process.env.NODE_ENV}`);
+// Get port from environment variable or use 3000 as default
+const port = process.env.PORT || 3000;
+
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+    console.log(`Environment: Set to "${process.env.NODE_ENV}"`);
 });
