@@ -7,9 +7,8 @@ const app = express();
 // Middleware
 app.use(express.json());
 
-// Serve static files
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/images', express.static(path.join(__dirname, 'images')));
+// Serve static files from root directory
+app.use(express.static(__dirname));
 
 // Basic health check endpoint
 app.get('/health', (req, res) => {
@@ -89,15 +88,32 @@ app.post('/save-reading', async (req, res) => {
 // Handle client data
 app.post('/api/save-client', (req, res) => {
     try {
-        const { name, email, birthdate } = req.body;
-        // Validate client data
-        if (!name || !email) {
-            return res.status(400).json({ error: 'Missing required client information' });
-        }
-        res.status(200).json({ message: 'Client data saved successfully' });
+        const clientData = req.body;
+        console.log('Received client data:', clientData);
+        res.json({ success: true });
     } catch (error) {
         console.error('Error saving client data:', error);
         res.status(500).json({ error: 'Failed to save client data' });
+    }
+});
+
+// Save reading data
+app.post('/api/save-reading', async (req, res) => {
+    try {
+        const readingData = req.body;
+        const fileName = `reading_${Date.now()}.json`;
+        const filePath = path.join(__dirname, 'readings', fileName);
+        
+        await fs.writeFile(filePath, JSON.stringify(readingData, null, 2));
+        
+        res.json({ 
+            success: true, 
+            message: 'Reading saved successfully',
+            fileName: fileName
+        });
+    } catch (error) {
+        console.error('Error saving reading:', error);
+        res.status(500).json({ error: 'Failed to save reading' });
     }
 });
 
@@ -113,4 +129,5 @@ const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
     console.log(`Environment: Set to "${process.env.NODE_ENV}"`);
+    console.log(`Static files being served from: ${__dirname}`);
 });
