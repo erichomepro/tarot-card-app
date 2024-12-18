@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Mystical Tarot Reading</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        :root {
+            --gold-color: #DAA520;
+            --text-color: #fff;
+            --background-color: #1a1a1a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .reading-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .reading-header h1 {
+            color: var(--gold-color);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .reading-info {
+            color: #ccc;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        .reading-section {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--gold-color);
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .reading-section h2 {
+            color: var(--gold-color);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .card-display {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            text-align: center;
+            flex: 0 1 250px;
+            perspective: 1000px;
+            margin: 1rem;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front,
+        .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            border: 2px solid var(--gold-color);
+        }
+
+        .card-front {
+            background-image: url('images/card-back.png');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .card-back img {
+            width: 150px;
+            height: auto;
+            margin-bottom: 1rem;
+            border: 2px solid var(--gold-color);
+            border-radius: 10px;
+        }
+
+        .card-name {
+            color: var(--gold-color);
+            font-size: 1.2rem;
+            margin-top: 0.5rem;
+        }
+
+        .interpretation {
+            margin-top: 2rem;
+            background: rgba(218, 165, 32, 0.1);
+            padding: 2rem;
+            border-radius: 8px;
+            line-height: 1.6;
+        }
+
+        .interpretation h3 {
+            color: var(--gold-color);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .loading {
+            text-align: center;
+            color: var(--gold-color);
+            font-size: 1.2rem;
+            margin: 2rem 0;
+        }
+
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+
+        .realm-reading {
+            border-color: #9932CC;
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        .realm-reading h2 {
+            color: #9932CC;
+            font-size: 2rem;
+        }
+
+        .realm-reading .interpretation {
+            background: rgba(153, 50, 204, 0.1);
+        }
+
+        .realm-reading .interpretation h3 {
+            color: #9932CC;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60% { content: '...'; }
+            80%, 100% { content: ''; }
+        }
+
+        @media (max-width: 768px) {
+            .card-display {
+                gap: 1rem;
+            }
+
+            .card {
+                flex: 0 1 200px;
+            }
+
+            .reading-header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="reading-header">
+            <h1>Your Mystical Tarot Reading</h1>
+            <div class="reading-info">
+                <p>Reading Type: <span id="readingType"></span></p>
+                <p>Date: <span id="readingDate"></span></p>
+            </div>
+        </div>
+
+        <!-- Container for individual card readings -->
+        <div id="readingResults">
+            <!-- Reading sections will be dynamically added here -->
+        </div>
+
+        <!-- Realm Reading Section -->
+        <div class="reading-section realm-reading">
+            <h2>Realm Reading: <span id="realmTitle"></span></h2>
+            <div class="card-display">
+                <!-- Cards will be displayed here -->
+            </div>
+            <div class="interpretation">
+                <h3>Realm Interpretation</h3>
+                <div id="realmInterpretation" class="loading">Channeling the wisdom of the realm...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to format date
+        function formatDate(date) {
+            return new Intl.DateTimeFormat('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            }).format(date);
+        }
+
+        // Tarot card mapping
+        const tarotCards = {
+            1: "The Fool",
+            2: "The Magician",
+            3: "The High Priestess",
+            4: "The Empress",
+            5: "The Emperor",
+            6: "The Hierophant",
+            7: "The Lovers",
+            8: "The Chariot",
+            9: "Strength",
+            10: "The Hermit",
+            11: "Wheel of Fortune",
+            12: "Justice",
+            13: "The Hanged Man",
+            14: "Death",
+            15: "Temperance",
+            16: "The Devil",
+            17: "The Tower",
+            18: "TheStar",
+            19: "The Moon",
+            20: "The Sun",
+            21: "Judgment",
+            22: "The World",
+            23: "Ace of Wands",
+            24: "Two of Wands",
+            25: "Three of Wands",
+            26: "Four of Wands",
+            27: "Five of Wands",
+            28: "Six of Wands",
+            29: "seven of Wands",
+            30: "Eight of Wands",
+            31: "Nine of Wands",
+            32: "Ten of Wands",
+            33: "Page of Wands",
+            34: "Knight of Wands",
+            35: "Queen of Wands",
+            36: "King of Wands",
+            37: "Ace of Cups",
+            38: "Two of Cups",
+            39: "Three of Cups",
+            40: "Four of Cups",
+            41: "Five of Cups",
+            42: "Six of Cups",
+            43: "Seven of Cups",
+            44: "Eight of Cups",
+            45: "Nine of Cups",
+            46: "Ten of Cups",
+            47: "Page of Cups",
+            48: "Knight of Cups",
+            49: "Queen of Cups",
+            50: "King of Cups",
+            51: "Ace of Pentacles",
+            52: "Two of Pentacles",
+            53: "Three of Pentacles",
+            54: "Four of Pentacles",
+            55: "Five of Pentacles",
+            56: "Six of Pentacles",
+            57: "Seven of Pentacles",
+            58: "Eight of Pentacles",
+            59: "Nine of Pentacles",
+            60: "Ten of Pentacles",
+            61: "Page of Pentacles",
+            62: "Knight of Pentacles",
+            63: "Queen of Pentacles",
+            64: "King of Pentacles",
+            65: "Ace of Swords",
+            66: "Two of Swords",
+            67: "Three of Swords",
+            68: "Four of Swords",
+            69: "Five of Swords",
+            70: "Six of Swords",
+            71: "Seven of Swords",
+            72: "Eight of Swords",
+            73: "Nine of Swords",
+            74: "Ten of Swords",
+            75: "Page of Swords",
+            76: "Knight of Swords",
+            77: "Queen of Swords",
+            78: "King of Swords"
+        };
+
+        // OpenAI API key
+        const apiKey = process.env.OPENAI_API_KEY;
+
+        // Function to validate questions
+        function validateQuestion(question) {
+            const bannedPatterns = [
+                /(when|how).*(die|death|dead)/i,
+                /(specific.*medical.*advice|diagnosis|treatment)/i,
+                /(suicide|self.?harm|killing)/i,
+                /(illegal|criminal)/i
+            ];
+
+            const warnings = {
+                health: /(health|illness|disease|sickness|medical)/i,
+                future: /(when|will|future|predict)/i,
+                relationships: /(divorce|breakup|cheat|affair)/i
+            };
+
+            // Check for banned topics
+            for (const pattern of bannedPatterns) {
+                if (pattern.test(question)) {
+                    throw new Error(`We cannot provide readings about life-critical matters. Please consult appropriate professionals for guidance on such topics.`);
+                }
+            }
+
+            // Add warnings for sensitive topics
+            let disclaimers = [];
+            for (const [topic, pattern] of Object.entries(warnings)) {
+                if (pattern.test(question)) {
+                    switch(topic) {
+                        case 'health':
+                            disclaimers.push("Health-related readings are for spiritual guidance only and should not replace professional medical advice.");
+                            break;
+                        case 'future':
+                            disclaimers.push("Future-related readings are for guidance and should not be taken as definitive predictions.");
+                            break;
+                        case 'relationships':
+                            disclaimers.push("Relationship readings are for personal reflection and should not be the sole basis for major life decisions.");
+                            break;
+                    }
+                }
+            }
+
+            return disclaimers;
+        }
+
+        // Function to create reading section HTML
+        function createReadingSection(questionNumber, question, cardNumber) {
+            const cardName = tarotCards[cardNumber];
+            if (!cardName) {
+                console.error(`Invalid card number: ${cardNumber}`);
+                return '';
+            }
+
+            const formattedCardNumber = cardNumber.toString().padStart(2, '0');
+            const imageFileName = `Card - ${cardNumber} ${cardName}`;
+
+            return `
+                <div class="reading-section" id="reading-section-${questionNumber}">
+                    <h2>Question ${questionNumber}</h2>
+                    <p class="reading-info">${question}</p>
+                    <div class="card-display">
+                        <div class="card">
+                            <div class="card-inner">
+                                <div class="card-front"></div>
+                                <div class="card-back">
+                                    <img src="images/${imageFileName}.png" 
+                                         alt="${cardName}" 
+                                         loading="lazy"
+                                         onerror="console.error('Failed to load image:', '${imageFileName}.png')">
+                                    <div class="card-name">${cardName}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="interpretation">
+                        <h3>Mystical Interpretation</h3>
+                        <div class="loading">Channeling the cards' wisdom...</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Function to create realm reading section
+        function createRealmReadingSection(cards, realm) {
+            document.getElementById('realmTitle').textContent = realm;
+            const cardElements = cards.map((cardNumber, index) => {
+                const cardName = tarotCards[cardNumber];
+                if (!cardName) {
+                    console.error(`Invalid card number: ${cardNumber}`);
+                    return '';
+                }
+
+                const imageFileName = `Card - ${cardNumber} ${cardName}`;
+
+                return `
+                    <div class="card">
+                        <div class="card-inner">
+                            <div class="card-front"></div>
+                            <div class="card-back">
+                                <img src="images/${imageFileName}.png" 
+                                     alt="${cardName}" 
+                                     loading="lazy"
+                                     onerror="console.error('Failed to load image:', '${imageFileName}.png')">
+                                <div class="card-name">${cardName}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            const realmReadingSection = document.querySelector('.realm-reading .card-display');
+            realmReadingSection.innerHTML = cardElements;
+        }
+
+        // Function to get interpretation from ChatGPT
+        async function getInterpretation(question, cardNumber, readingType) {
+            // Check for sensitive questions and modify prompt accordingly
+            const sensitiveTopics = {
+                death: /(when|how).*(die|death|dead)/i,
+                health: /(health|illness|disease|sickness|medical)/i,
+                harm: /(harm|hurt|injury|suicide|kill)/i
+            };
+
+            let modifiedQuestion = question;
+            let ethicalDisclaimer = "";
+
+            // Check if question contains sensitive topics
+            if (sensitiveTopics.death.test(question) || sensitiveTopics.health.test(question)) {
+                ethicalDisclaimer = `Note: This reading is for entertainment purposes only and should not be taken as medical, legal, or professional advice. 
+                Please consult appropriate professionals for guidance on health, medical, or life-critical matters.`;
+                
+                // Modify question to focus on spiritual guidance rather than specific predictions
+                modifiedQuestion = question.replace(sensitiveTopics.death, "what spiritual lessons should I focus on")
+                                        .replace(sensitiveTopics.health, "what energies should I be mindful of regarding my wellbeing");
+            }
+
+            const prompt = `You are a wise and compassionate tarot reader who provides spiritual guidance while maintaining ethical boundaries. 
+            The seeker has drawn ${tarotCards[cardNumber]} in relation to: "${modifiedQuestion}"
+
+            ${ethicalDisclaimer}
+
+            Please provide an ethical and supportive interpretation that includes:
+
+            1. 🌟 Spiritual Wisdom: Share the deeper spiritual and archetypal meaning of ${tarotCards[cardNumber]}, focusing on personal growth and inner understanding.
+
+            2. 🔮 Mindful Guidance: Offer insights that empower the seeker to make conscious choices and maintain a positive outlook.
+
+            3. ✨ Practical Support: Suggest constructive actions and mindful practices that promote wellbeing and personal development.
+
+            4. 🌙 Positive Focus: Share uplifting perspectives that encourage hope and resilience while respecting ethical boundaries.
+
+            5. 💫 Integration: Suggest ways to integrate the wisdom of the cards into the seeker's daily life.
+
+            Keep your response compassionate yet responsible, focusing on the ${readingType} aspect of their journey. Speak with wisdom and care, offering guidance that empowers without making specific predictions about health or life-critical matters.`;
+
+            try {
+                // Check for cached interpretation
+                const cacheKey = `interpretation_${cardNumber}_${modifiedQuestion}`;
+                const cachedInterpretation = sessionStorage.getItem(cacheKey);
+                
+                if (cachedInterpretation) {
+                    console.log('Using cached interpretation');
+                    return cachedInterpretation;
+                }
+
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: "gpt-4-turbo",
+                        messages: [{
+                            role: "user",
+                            content: prompt
+                        }],
+                        temperature: 0.7
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    console.error('API Error:', errorData);
+                    throw new Error(`API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
+                }
+
+                const data = await response.json();
+                let interpretation = data.choices[0].message.content;
+
+                // Add disclaimer for sensitive topics
+                if (ethicalDisclaimer) {
+                    interpretation = `⚠️ ${ethicalDisclaimer}\n\n${interpretation}`;
+                }
+                
+                // Cache the interpretation
+                sessionStorage.setItem(cacheKey, interpretation);
+                
+                return interpretation;
+            } catch (error) {
+                console.error('Error getting interpretation:', error);
+                throw new Error('Failed to get card interpretation. Please check your connection and try again.');
+            }
+        }
+
+        // Function to get realm interpretation
+        async function getRealmInterpretation(cards, realm) {
+            const API_KEY = process.env.OPENAI_API_KEY;
+            const cardNames = cards.map(num => tarotCards[num]).join(', ');
+            
+            const prompt = `You are a wise and mystical tarot reader with deep spiritual insight into the ${realm} realm. As you gaze into this ethereal dimension, you see that the seeker has drawn these powerful cards: ${cardNames}.
+
+In your role as a spiritual guide to the ${realm} realm, provide an illuminating interpretation that includes:
+
+1. 🌟 Realm Essence: Describe the unique energy and characteristics of the ${realm} realm, and how it influences the seeker's journey.
+
+2. 🔮 Cards' Harmony: Explain how these three cards work together specifically within the ${realm} realm, revealing their combined message and energy.
+
+3. ✨ Realm Guidance: Share wisdom and advice drawn from both the cards and the ${realm} realm's energy, offering practical steps for the seeker's spiritual journey.
+
+4. 🌙 Realm Potential: Provide insights into how the seeker can best harness the energy of the ${realm} realm using the guidance of these cards.
+
+5. 💫 Integration: Suggest ways to integrate the wisdom of the ${realm} realm into the seeker's daily life.
+
+Speak with the ancient wisdom of the ${realm} realm, as if you're channeling its energy directly to the seeker in a sacred space illuminated by starlight.`;
+
+            try {
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        model: "gpt-4-turbo",
+                        messages: [{
+                            role: "user",
+                            content: prompt
+                        }],
+                        temperature: 0.7
+                    })
+                });
+
+                const data = await response.json();
+                return data.choices[0].message.content;
+            } catch (error) {
+                console.error('Error:', error);
+                return 'The energies of the realm are mysterious at this moment. Please try again later.';
+            }
+        }
+
+        // Function to check if element is in viewport
+        function isElementInViewport(el) {
+            const rect = el.getBoundingClientRect();
+            return (
+                rect.top >= 0 &&
+                rect.left >= 0 &&
+                rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+                rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+            );
+        }
+
+        // Function to handle scroll animation
+        function handleScroll() {
+            const cards = document.querySelectorAll('.card:not(.flipped)');
+            cards.forEach(card => {
+                if (isElementInViewport(card)) {
+                    setTimeout(() => {
+                        card.classList.add('flipped');
+                    }, 500); // Add a small delay for better visual effect
+                }
+            });
+        }
+
+        // Add scroll event listener
+        window.addEventListener('scroll', handleScroll);
+        // Initial check for cards in viewport
+        handleScroll();
+
+        // Optional: Add click listener to toggle cards back if desired
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            card.addEventListener('click', () => {
+                card.classList.toggle('flipped');
+            });
+        });
+
+        // Initialize the page
+        window.onload = async function() {
+            try {
+                // Get reading data from URL
+                const params = new URLSearchParams(window.location.search);
+                const readingData = JSON.parse(decodeURIComponent(params.get('readingData')));
+                const clientInfo = JSON.parse(sessionStorage.getItem('clientInfo'));
+
+                // Update reading info
+                document.getElementById('readingType').textContent = readingData.readingType;
+                document.getElementById('readingDate').textContent = formatDate(new Date());
+
+                // Create reading sections
+                const questions = [
+                    { question: readingData.question1, cardNumber: readingData.card1 },
+                    { question: readingData.question2, cardNumber: readingData.card2 },
+                    { question: readingData.question3, cardNumber: readingData.card3 }
+                ];
+
+                // Add reading sections to the page
+                const resultsContainer = document.getElementById('readingResults');
+                questions.forEach((q, index) => {
+                    resultsContainer.innerHTML += createReadingSection(index + 1, q.question, q.cardNumber);
+                });
+
+                // Get interpretations
+                const interpretations = [];
+                let realmInterpretation = '';
+
+                // Get individual card interpretations
+                for (let i = 0; i < questions.length; i++) {
+                    const interpretation = await getInterpretation(
+                        questions[i].question,
+                        questions[i].cardNumber,
+                        readingData.readingType
+                    );
+                    interpretations.push(interpretation);
+                    document.querySelector(`#reading-section-${i + 1} .interpretation .loading`).innerHTML = interpretation;
+                }
+
+                // Add realm reading section if readingType is specified
+                if (readingData.readingType) {
+                    const cards = [readingData.card1, readingData.card2, readingData.card3];
+                    createRealmReadingSection(cards, readingData.readingType);
+                    
+                    // Get realm interpretation
+                    realmInterpretation = await getRealmInterpretation(cards, readingData.readingType);
+                    document.getElementById('realmInterpretation').innerHTML = realmInterpretation;
+                }
+
+                // Save reading to file
+                await saveReadingToFile(clientInfo, readingData, questions, interpretations, realmInterpretation);
+
+                // Add card flip animation on scroll
+                const cards = document.querySelectorAll('.card');
+                cards.forEach(card => {
+                    card.addEventListener('click', () => {
+                        card.classList.toggle('flipped');
+                    });
+                });
+
+                // Initial check for cards in viewport
+                handleScroll();
+
+            } catch (error) {
+                console.error('Error initializing reading:', error);
+                alert('There was an error loading your reading. Please try again.');
+            }
+        };
+
+        // Function to save reading to file
+        async function saveReadingToFile(clientInfo, readingData, questions, interpretations, realmInterpretation) {
+            try {
+                const currentDate = new Date();
+                const fileName = `${clientInfo.name.replace(/[^a-z0-9]/gi, '_')}_${currentDate.toISOString().split('T')[0]}.txt`;
+                const filePath = `readings/${fileName}`;
+
+                const readingContent = `
+Tarot Card Reading
+-----------------
+Date: ${formatDate(currentDate)}
+
+Client Information
+-----------------
+Name: ${clientInfo.name}
+Email: ${clientInfo.email}
+Date of Birth: ${clientInfo.dob}
+
+Reading Type: ${readingData.readingType}
+
+Individual Card Readings
+----------------------
+${questions.map((q, i) => `
+Question ${i + 1}: ${q.question}
+Card Drawn: ${tarotCards[q.cardNumber]}
+Interpretation:
+${interpretations[i]}
+`).join('\n')}
+
+Three Card Spread - ${readingData.readingType} Reading
+---------------------------------------------------
+Cards Drawn: 
+1. ${tarotCards[readingData.card1]} (Past/Foundation)
+2. ${tarotCards[readingData.card2]} (Present/Situation)
+3. ${tarotCards[readingData.card3]} (Future/Outcome)
+
+Realm Interpretation:
+${realmInterpretation}
+`;
+
+                const response = await fetch('/save-reading', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        fileName: filePath,
+                        content: readingContent
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to save reading');
+                }
+
+            } catch (error) {
+                console.error('Error saving reading:', error);
+                // Don't alert the user - this is a background operation
+            }
+        }
+    </script>
+</body>
+</html>

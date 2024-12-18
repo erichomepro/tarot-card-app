@@ -1,0 +1,12 @@
+{
+  "name": "tarot-card-app",
+  "version": "1.0.0",
+  "description": "A mystical tarot card reading application",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

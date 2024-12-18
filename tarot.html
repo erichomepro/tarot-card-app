@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instant Tarot Card Reading - Tarot Card Tube</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --gold-color: #D4AF37;
+            --text-color: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #000000;
+            color: var(--text-color);
+            line-height: 1.6;
+            background-image: url('images/pdf-background.jpg');
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .header {
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 100;
+        }
+
+        .logo img {
+            height: 65px;
+            width: auto;
+            opacity: 1;
+            transition: transform 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .logo:hover img {
+            transform: scale(1.1);
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-menu a {
+            color: var(--text-color);
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        .main-content {
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            color: var(--gold-color);
+            margin-bottom: 2rem;
+            font-weight: 300;
+            letter-spacing: 4px;
+        }
+
+        .reading-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .client-info {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            width: 100%;
+            max-width: 600px;
+            border: 1px solid var(--gold-color);
+        }
+
+        .client-info h2 {
+            color: var(--gold-color);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .info-text {
+            color: #ccc;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--gold-color);
+        }
+
+        .client-input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--gold-color);
+            border-radius: 5px;
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        .required {
+            color: #ff4444;
+            margin-left: 4px;
+        }
+
+        .client-input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
+        }
+
+        .questions-section {
+            width: 100%;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid var(--gold-color);
+            border-radius: 10px;
+        }
+
+        .questions-section h2 {
+            color: var(--gold-color);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .question-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            align-items: center;
+        }
+
+        .question-input-wrapper {
+            flex: 1;
+        }
+
+        .question-label {
+            display: block;
+            color: var(--gold-color);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+
+        .question-input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--gold-color);
+            border-radius: 5px;
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        .card-number-select {
+            width: 100px;
+            padding: 0.5rem;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--gold-color);
+            color: var(--gold-color);
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .card-number-select option {
+            background: #1a1a1a;
+        }
+
+        .reading-type-group {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(218, 165, 32, 0.3);
+        }
+
+        .reading-type-label {
+            display: block;
+            color: var(--gold-color);
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            text-transform: none;
+            letter-spacing: 1px;
+            text-align: center;
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        .reading-type-select {
+            width: 100%;
+            max-width: 300px;
+            padding: 1rem;
+            background: rgba(218, 165, 32, 0.1);
+            border: 2px solid var(--gold-color);
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23DAA520%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem top 50%;
+            background-size: 0.8rem auto;
+            margin: 0 auto;
+        }
+
+        .reading-type-select:hover {
+            background-color: rgba(218, 165, 32, 0.2);
+        }
+
+        .reading-type-select option {
+            background: #1a1a1a;
+            padding: 12px;
+            color: white;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+        }
+
+        .draw-button {
+            background: linear-gradient(45deg, rgba(218, 165, 32, 0.1), rgba(218, 165, 32, 0.2));
+            color: var(--gold-color);
+            border: 2px solid var(--gold-color);
+            padding: 1.2rem 2.5rem;
+            font-size: 1.3rem;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 2rem 0;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 0 15px rgba(218, 165, 32, 0.1);
+        }
+
+        .draw-button:hover {
+            background: linear-gradient(45deg, rgba(218, 165, 32, 0.2), rgba(218, 165, 32, 0.3));
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(218, 165, 32, 0.2);
+        }
+
+        .video-container {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+            width: 100%;
+            max-width: 800px;
+            border: 1px solid var(--gold-color);
+        }
+
+        .video-container h2 {
+            color: var(--gold-color);
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .video-description {
+            color: #ccc;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-top: 1.5rem;
+            text-align: left;
+        }
+
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .question-group {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .card-number-select {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-overlay"></div>
+    
+    <header class="header">
+        <a href="index.html" class="logo">
+            <img src="images/logo.png" alt="Tarot Card Tube Logo">
+        </a>
+        <nav class="nav-menu">
+            <a href="index.html">HOME</a>
+            <a href="tarot.html">TAROT</a>
+            <a href="#">HOROSCOPE</a>
+            <a href="#">CONTACT</a>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <h1 class="page-title">INSTANT TAROT CARD READING</h1>
+        
+        <div class="reading-section">
+            <div class="client-info">
+                <h2>Personal Information</h2>
+                <p class="info-text">Please provide your details below. Your email address is required to receive your personalized PDF tarot reading directly to your inbox. All information is kept confidential and secure.</p>
+                
+                <div class="input-group">
+                    <label>Full Name<span class="required">*</span></label>
+                    <input type="text" class="client-input" id="client-name" required placeholder="Enter your full name">
+                </div>
+                
+                <div class="input-group">
+                    <label>Email Address<span class="required">*</span></label>
+                    <input type="email" class="client-input" id="client-email" required placeholder="Enter your email address">
+                </div>
+                
+                <div class="input-group">
+                    <label>Date of Birth<span class="required">*</span></label>
+                    <input type="date" class="client-input" id="client-birthdate" required>
+                </div>
+            </div>
+
+            <div class="video-container">
+                <h2>Understanding Your Tarot Reading</h2>
+                <div class="video-wrapper">
+                    <iframe 
+                        src="https://www.youtube.com/embed/sp2TLoYf66E" 
+                        title="Understanding Tarot Reading"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+                <p class="video-description">
+                    In this video, we explore the deep symbolism and meaning behind your tarot card reading. Learn how to 
+                    interpret the cards drawn for you and understand how they relate to your questions and life path. Our 
+                    expert reader guides you through the process of connecting with the cards' energy and applying their 
+                    wisdom to your situation.
+                </p>
+            </div>
+
+            <div class="questions-section">
+                <h2>Your Three Questions for the Cards</h2>
+                
+                <div class="question-group">
+                    <div class="question-input-wrapper">
+                        <label class="question-label">Question 1:</label>
+                        <input type="text" class="question-input" id="question1" placeholder="Enter your first question...">
+                    </div>
+                    <div>
+                        <label class="question-label">Card Number:</label>
+                        <select class="card-number-select" id="card1">
+                            <option value="">Select</option>
+                            <script>
+                                for(let i = 1; i <= 78; i++) {
+                                    document.write(`<option value="${i}">${i}</option>`);
+                                }
+                            </script>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="question-group">
+                    <div class="question-input-wrapper">
+                        <label class="question-label">Question 2:</label>
+                        <input type="text" class="question-input" id="question2" placeholder="Enter your second question...">
+                    </div>
+                    <div>
+                        <label class="question-label">Card Number:</label>
+                        <select class="card-number-select" id="card2">
+                            <option value="">Select</option>
+                            <script>
+                                for(let i = 1; i <= 78; i++) {
+                                    document.write(`<option value="${i}">${i}</option>`);
+                                }
+                            </script>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="question-group">
+                    <div class="question-input-wrapper">
+                        <label class="question-label">Question 3:</label>
+                        <input type="text" class="question-input" id="question3" placeholder="Enter your third question...">
+                    </div>
+                    <div>
+                        <label class="question-label">Card Number:</label>
+                        <select class="card-number-select" id="card3">
+                            <option value="">Select</option>
+                            <script>
+                                for(let i = 1; i <= 78; i++) {
+                                    document.write(`<option value="${i}">${i}</option>`);
+                                }
+                            </script>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="reading-type-group">
+                    <label class="reading-type-label">Select one of the following enigmatic realms to delve deeper into the mysteries of your life:</label>
+                    <select class="reading-type-select" id="reading-type">
+                        <option value="">Choose Your Realm</option>
+                        <option value="love">Love and Relationships</option>
+                        <option value="career">Career and Ambitions</option>
+                        <option value="health">Health and Well-being</option>
+                        <option value="spiritual">Spiritual Growth</option>
+                        <option value="personal">Personal Challenges</option>
+                    </select>
+                </div>
+            </div>
+
+            <button class="draw-button">Enter the Realm of Tarot</button>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const drawButton = document.querySelector('.draw-button');
+            
+            console.log('Draw button event listener attached');
+
+            drawButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log('Draw button clicked');
+
+                // Validate client information
+                const formData = {
+                    name: document.getElementById('client-name').value.trim(),
+                    email: document.getElementById('client-email').value.trim(),
+                    birthdate: document.getElementById('client-birthdate').value.trim(),
+                    question1: document.getElementById('question1').value.trim(),
+                    question2: document.getElementById('question2').value.trim(),
+                    question3: document.getElementById('question3').value.trim(),
+                    card1: document.getElementById('card1').value,
+                    card2: document.getElementById('card2').value,
+                    card3: document.getElementById('card3').value,
+                    readingType: document.getElementById('reading-type').value
+                };
+
+                console.log('Form Data:', formData);
+
+                // Check which fields are empty
+                const emptyFields = Object.entries(formData)
+                    .filter(([key, value]) => !value)
+                    .map(([key]) => key);
+
+                if (emptyFields.length > 0) {
+                    console.log('Empty fields:', emptyFields);
+                    alert(`Please fill in the following fields:\n${emptyFields.join('\n')}`);
+                    return;
+                }
+
+                // Validate email format
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(formData.email)) {
+                    console.log('Invalid email:', formData.email);
+                    alert('Please enter a valid email address.');
+                    return;
+                }
+
+                try {
+                    // Prepare reading data
+                    const queryString = encodeURIComponent(JSON.stringify(formData));
+                    console.log('Redirecting to reading page with data');
+                    window.location.href = `reading.html?readingData=${queryString}`;
+                } catch (error) {
+                    console.error('Error preparing redirect:', error);
+                    alert('An error occurred while preparing your reading. Please try again.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
