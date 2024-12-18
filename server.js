@@ -141,12 +141,21 @@ const port = process.env.PORT || 3000;
 app.listen(port, '0.0.0.0', () => {
     console.log('==================================');
     console.log(`Server is running on port ${port}`);
-    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`Environment: ${process.env.NODE_ENV}`);
     console.log(`Static files being served from: ${__dirname}`);
     console.log(`Images directory: ${path.join(__dirname, 'images')}`);
     console.log('Directory contents:');
-    fs.readdir(__dirname)
-        .then(files => console.log(files))
-        .catch(err => console.error('Error listing directory:', err));
+    try {
+        const files = fs.readdirSync(__dirname);
+        console.log(JSON.stringify(files, null, 2));
+        
+        // Log images directory contents
+        const imagesDir = path.join(__dirname, 'images');
+        const imageFiles = fs.readdirSync(imagesDir);
+        console.log('\nImages directory contents:');
+        console.log(JSON.stringify(imageFiles, null, 2));
+    } catch (err) {
+        console.error('Error listing directory:', err);
+    }
     console.log('==================================');
 });
