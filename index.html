@@ -380,15 +380,50 @@
             sessionStorage.setItem('readingType', readingType);
         }
 
-        document.getElementById('clientForm').addEventListener('submit', function(e) {
+        document.getElementById('clientForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const clientInfo = {
-                name: document.getElementById('clientName').value,
-                email: document.getElementById('clientEmail').value,
-                dob: document.getElementById('clientDOB').value
-            };
-            sessionStorage.setItem('clientInfo', JSON.stringify(clientInfo));
-            window.location.href = 'reading.html';
+            
+            // Get form data
+            const name = document.getElementById('clientName').value;
+            const email = document.getElementById('clientEmail').value;
+            const birthdate = document.getElementById('clientDOB').value;
+            
+            // Validate form data
+            if (!name || !email || !birthdate) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            try {
+                // Generate random card numbers (1-78)
+                const card1 = Math.floor(Math.random() * 78) + 1;
+                const card2 = Math.floor(Math.random() * 78) + 1;
+                const card3 = Math.floor(Math.random() * 78) + 1;
+
+                // Get reading type from session storage
+                const readingType = sessionStorage.getItem('readingType') || 'Personal Reading';
+
+                // Store client info in session storage
+                const clientInfo = { name, email, birthdate };
+                sessionStorage.setItem('clientInfo', JSON.stringify(clientInfo));
+
+                // Create reading data
+                const readingData = {
+                    readingType,
+                    card1,
+                    card2,
+                    card3,
+                    question1: "What energies are currently surrounding me?",
+                    question2: "What challenges should I be aware of?",
+                    question3: "What opportunities are coming my way?"
+                };
+
+                // Redirect to reading page with data
+                window.location.href = `reading.html?readingData=${encodeURIComponent(JSON.stringify(readingData))}`;
+            } catch (error) {
+                console.error('Error preparing reading:', error);
+                alert('There was an error preparing your reading. Please try again.');
+            }
         });
 
         // Add click handlers to reading option buttons

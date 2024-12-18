@@ -596,17 +596,38 @@ Speak with the ancient wisdom of the ${realm} realm, as if you're channeling its
                 const readingDataParam = params.get('readingData');
                 const clientInfoStr = sessionStorage.getItem('clientInfo');
 
-                if (!readingDataParam || !clientInfoStr) {
-                    throw new Error('Missing reading data or client information');
+                if (!readingDataParam) {
+                    throw new Error('No reading data found. Please start a new reading.');
                 }
 
-                const readingData = JSON.parse(decodeURIComponent(readingDataParam));
-                const clientInfo = JSON.parse(clientInfoStr);
+                if (!clientInfoStr) {
+                    throw new Error('No client information found. Please start a new reading.');
+                }
+
+                let readingData;
+                let clientInfo;
+
+                try {
+                    readingData = JSON.parse(decodeURIComponent(readingDataParam));
+                    clientInfo = JSON.parse(clientInfoStr);
+                } catch (parseError) {
+                    console.error('Error parsing data:', parseError);
+                    throw new Error('Invalid reading data format. Please start a new reading.');
+                }
+
+                // Validate required data
+                if (!readingData.readingType || !readingData.card1 || !readingData.card2 || !readingData.card3) {
+                    throw new Error('Missing required reading information. Please start a new reading.');
+                }
+
+                if (!clientInfo.name || !clientInfo.email) {
+                    throw new Error('Missing required client information. Please start a new reading.');
+                }
 
                 // Update reading info
-                document.getElementById('readingType').textContent = readingData.readingType || 'Personal Reading';
+                document.getElementById('readingType').textContent = readingData.readingType;
                 document.getElementById('readingDate').textContent = formatDate(new Date());
-                document.getElementById('clientName').textContent = clientInfo.name || 'Anonymous';
+                document.getElementById('clientName').textContent = clientInfo.name;
 
                 // Create reading sections
                 const questions = [
