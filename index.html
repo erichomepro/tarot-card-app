@@ -156,7 +156,7 @@
             margin-bottom: 4rem;
         }
 
-        .reading-card {
+        .reading-option {
             background: rgba(0, 0, 0, 0.7);
             border-radius: 10px;
             padding: 1.5rem;
@@ -166,12 +166,12 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
-        .reading-card:hover {
+        .reading-option:hover {
             transform: translateY(-10px);
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
         }
 
-        .reading-card img {
+        .reading-option img {
             width: 100%;
             height: auto;
             object-fit: contain;
@@ -179,7 +179,7 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
-        .reading-card h3 {
+        .reading-option h3 {
             color: var(--gold-color);
             margin-top: 1.5rem;
             font-size: 1.2rem;
@@ -240,7 +240,7 @@
                 gap: 2rem;
             }
 
-            .reading-card {
+            .reading-option {
                 width: 90%;
                 max-width: 450px;
             }
@@ -269,48 +269,48 @@
     <div class="background-overlay"></div>
     
     <header class="header">
-        <a href="#" class="logo">
+        <a href="/" class="logo">
             <img src="images/logo.png" alt="Tarot Card Tube Logo">
         </a>
         <nav class="nav-menu">
-            <a href="index.html">HOME</a>
-            <a href="tarot.html">TAROT</a>
-            <a href="#">HOROSCOPE</a>
-            <a href="#">CONTACT</a>
+            <a href="/">HOME</a>
+            <a href="#tarot">TAROT</a>
+            <a href="#horoscope">HOROSCOPE</a>
+            <a href="#contact">CONTACT</a>
         </nav>
     </header>
 
     <main class="main-content">
-        <h1 class="site-title">Tarot Card Tube</h1>
+        <h1>Tarot Card Tube</h1>
         <p class="subtitle">Discover Your Path Through the Cards</p>
 
-        <!-- Client Information Form -->
-        <form id="clientForm" class="client-form">
-            <div class="form-group">
-                <label for="clientName">Full Name</label>
-                <input type="text" id="clientName" name="clientName" required>
-            </div>
-            <div class="form-group">
-                <label for="clientEmail">Email</label>
-                <input type="email" id="clientEmail" name="clientEmail" required>
-            </div>
-            <div class="form-group">
-                <label for="clientDOB">Date of Birth</label>
-                <input type="date" id="clientDOB" name="clientDOB" required>
-            </div>
-            <button type="submit" class="submit-btn">Continue to Reading</button>
-        </form>
-
         <div class="reading-options">
-            <div class="reading-card" onclick="window.location.href='tarot.html'">
-                <img src="images/tarot-card (2).jpg" alt="Instant Tarot Card Reading">
-                <h3>Instant Tarot Card Reading</h3>
+            <div class="reading-option" data-type="personal">
+                <img src="images/personal-reading.jpg" alt="Personal Reading">
+                <h3>PERSONAL READING</h3>
             </div>
-            <div class="reading-card">
-                <img src="images/horoscope (2).jpg" alt="Instant Horoscope Reading">
-                <h3>Instant Horoscope Reading</h3>
+            <div class="reading-option" data-type="career">
+                <img src="images/career-reading.jpg" alt="Career Reading">
+                <h3>CAREER READING</h3>
+            </div>
+            <div class="reading-option" data-type="love">
+                <img src="images/love-reading.jpg" alt="Love Reading">
+                <h3>LOVE READING</h3>
             </div>
         </div>
+
+        <form id="clientForm" class="client-form" style="display: none;">
+            <div class="form-group">
+                <input type="text" id="clientName" required placeholder="Your Name">
+            </div>
+            <div class="form-group">
+                <input type="email" id="clientEmail" required placeholder="Your Email">
+            </div>
+            <div class="form-group">
+                <input type="date" id="clientDOB" required>
+            </div>
+            <button type="submit" class="submit-btn">Start Your Reading</button>
+        </form>
 
         <div id="error-message" class="error-message" style="display: none;"></div>
 
@@ -380,6 +380,11 @@
             sessionStorage.setItem('readingType', readingType);
         }
 
+        // Add click handlers to reading option buttons
+        document.querySelectorAll('.reading-option').forEach(button => {
+            button.addEventListener('click', () => startReading(button.dataset.type));
+        });
+
         document.getElementById('clientForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -427,11 +432,6 @@
                 console.error('Error preparing reading:', error);
                 alert('There was an error preparing your reading. Please try again.');
             }
-        });
-
-        // Add click handlers to reading option buttons
-        document.querySelectorAll('.reading-option').forEach(button => {
-            button.addEventListener('click', () => startReading(button.dataset.type));
         });
     </script>
 </body>
