@@ -7,20 +7,26 @@ const app = express();
 // Middleware
 app.use(express.json());
 
-// Serve static files from root directory
-app.use(express.static(__dirname));
-
-// Basic health check endpoint
-app.get('/health', (req, res) => {
-    res.status(200).json({ status: 'ok' });
+// Debug middleware to log all requests
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.url}`);
+    next();
 });
 
-// Serve index.html for root route
+// Serve static files from root directory
+app.use(express.static(path.join(__dirname), {
+    setHeaders: (res, filePath) => {
+        if (filePath.endsWith('.jpg') || filePath.endsWith('.png')) {
+            res.set('Cache-Control', 'public, max-age=31536000');
+        }
+    }
+}));
+
+// Serve HTML files
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Serve other HTML files
 app.get('/reading', (req, res) => {
     res.sendFile(path.join(__dirname, 'reading.html'));
 });
@@ -32,7 +38,7 @@ app.get('/tarot', (req, res) => {
 // OpenAI interpretation endpoint
 app.post('/api/get-interpretation', async (req, res) => {
     try {
-        const { prompt, readingType } = req.body;
+        const { prompt } = req.body;
         
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
             method: 'POST',
@@ -59,29 +65,6 @@ app.post('/api/get-interpretation', async (req, res) => {
     } catch (error) {
         console.error('Error in get-interpretation:', error);
         res.status(500).json({ error: 'Failed to get interpretation' });
-    }
-});
-
-// Endpoint to save reading
-app.post('/save-reading', async (req, res) => {
-    try {
-        const { fileName, content } = req.body;
-        const filePath = path.join(__dirname, fileName);
-
-        // Ensure the readings directory exists
-        const readingsDir = path.join(__dirname, 'readings');
-        try {
-            await fs.access(readingsDir);
-        } catch {
-            await fs.mkdir(readingsDir, { recursive: true });
-        }
-
-        // Write the file
-        await fs.writeFile(filePath, content);
-        res.status(200).json({ message: 'Reading saved successfully' });
-    } catch (error) {
-        console.error('Error saving reading:', error);
-        res.status(500).json({ error: 'Failed to save reading' });
     }
 });
 
@@ -119,7 +102,7 @@ app.post('/api/save-reading', async (req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-    console.error(err.stack);
+    console.error('Global error handler:', err);
     res.status(500).json({ error: 'Something broke!' });
 });
 
@@ -128,6 +111,7 @@ const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
-    console.log(`Environment: Set to "${process.env.NODE_ENV}"`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
     console.log(`Static files being served from: ${__dirname}`);
+    console.log(`Images directory: ${path.join(__dirname, 'images')}`);
 });
