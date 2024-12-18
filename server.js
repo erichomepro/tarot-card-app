@@ -14,25 +14,34 @@ app.use((req, res, next) => {
     next();
 });
 
-// Serve static files from root directory with detailed logging
+// Serve static files with proper MIME types
+app.use('/images', express.static(path.join(__dirname, 'images'), {
+    setHeaders: (res, filePath) => {
+        if (filePath.endsWith('.jpg')) {
+            res.set('Content-Type', 'image/jpeg');
+        } else if (filePath.endsWith('.png')) {
+            res.set('Content-Type', 'image/png');
+        }
+        res.set('Cache-Control', 'public, max-age=31536000');
+    }
+}));
+
+// Serve other static files
+app.use(express.static(__dirname));
+
+// Debug middleware for image requests
 app.use((req, res, next) => {
     if (req.url.includes('/images/')) {
+        const fullPath = path.join(__dirname, req.url);
         console.log('Image request:', {
             url: req.url,
-            path: path.join(__dirname, req.url),
-            exists: fs.existsSync(path.join(__dirname, req.url))
+            path: fullPath,
+            exists: fs.existsSync(fullPath),
+            contentType: req.get('Content-Type')
         });
     }
     next();
 });
-
-app.use(express.static(__dirname, {
-    setHeaders: (res, filePath) => {
-        if (filePath.endsWith('.jpg') || filePath.endsWith('.png')) {
-            res.set('Cache-Control', 'public, max-age=31536000');
-        }
-    }
-}));
 
 // Serve HTML files
 app.get('/', (req, res) => {
