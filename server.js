@@ -1,6 +1,7 @@
 const express = require('express');
 const fs = require('fs').promises;
 const path = require('path');
+const fetch = require('node-fetch'); // Add this line to import fetch
 const app = express();
 
 // Middleware
@@ -10,6 +11,39 @@ app.use(express.static(__dirname));
 // Basic health check endpoint
 app.get('/health', (req, res) => {
     res.status(200).json({ status: 'ok' });
+});
+
+// OpenAI interpretation endpoint
+app.post('/api/get-interpretation', async (req, res) => {
+    try {
+        const { prompt, readingType } = req.body;
+        
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+            },
+            body: JSON.stringify({
+                model: "gpt-4-turbo",
+                messages: [{
+                    role: "user",
+                    content: prompt
+                }],
+                temperature: 0.7
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('OpenAI API error');
+        }
+
+        const data = await response.json();
+        res.json({ interpretation: data.choices[0].message.content });
+    } catch (error) {
+        console.error('Error in get-interpretation:', error);
+        res.status(500).json({ error: 'Failed to get interpretation' });
+    }
 });
 
 // Endpoint to save reading

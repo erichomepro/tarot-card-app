@@ -332,9 +332,6 @@
             78: "King of Swords"
         };
 
-        // OpenAI API key
-        const apiKey = process.env.OPENAI_API_KEY;
-
         // Function to validate questions
         function validateQuestion(question) {
             const bannedPatterns = [
@@ -449,92 +446,59 @@
 
         // Function to get interpretation from ChatGPT
         async function getInterpretation(question, cardNumber, readingType) {
-            // Check for sensitive questions and modify prompt accordingly
-            const sensitiveTopics = {
-                death: /(when|how).*(die|death|dead)/i,
-                health: /(health|illness|disease|sickness|medical)/i,
-                harm: /(harm|hurt|injury|suicide|kill)/i
-            };
-
-            let modifiedQuestion = question;
-            let ethicalDisclaimer = "";
-
-            // Check if question contains sensitive topics
-            if (sensitiveTopics.death.test(question) || sensitiveTopics.health.test(question)) {
-                ethicalDisclaimer = `Note: This reading is for entertainment purposes only and should not be taken as medical, legal, or professional advice. 
-                Please consult appropriate professionals for guidance on health, medical, or life-critical matters.`;
-                
-                // Modify question to focus on spiritual guidance rather than specific predictions
-                modifiedQuestion = question.replace(sensitiveTopics.death, "what spiritual lessons should I focus on")
-                                        .replace(sensitiveTopics.health, "what energies should I be mindful of regarding my wellbeing");
-            }
-
-            const prompt = `You are a wise and compassionate tarot reader who provides spiritual guidance while maintaining ethical boundaries. 
-            The seeker has drawn ${tarotCards[cardNumber]} in relation to: "${modifiedQuestion}"
-
-            ${ethicalDisclaimer}
-
-            Please provide an ethical and supportive interpretation that includes:
-
-            1. 🌟 Spiritual Wisdom: Share the deeper spiritual and archetypal meaning of ${tarotCards[cardNumber]}, focusing on personal growth and inner understanding.
-
-            2. 🔮 Mindful Guidance: Offer insights that empower the seeker to make conscious choices and maintain a positive outlook.
-
-            3. ✨ Practical Support: Suggest constructive actions and mindful practices that promote wellbeing and personal development.
-
-            4. 🌙 Positive Focus: Share uplifting perspectives that encourage hope and resilience while respecting ethical boundaries.
-
-            5. 💫 Integration: Suggest ways to integrate the wisdom of the cards into the seeker's daily life.
-
-            Keep your response compassionate yet responsible, focusing on the ${readingType} aspect of their journey. Speak with wisdom and care, offering guidance that empowers without making specific predictions about health or life-critical matters.`;
-
             try {
-                // Check for cached interpretation
-                const cacheKey = `interpretation_${cardNumber}_${modifiedQuestion}`;
-                const cachedInterpretation = sessionStorage.getItem(cacheKey);
-                
-                if (cachedInterpretation) {
-                    console.log('Using cached interpretation');
-                    return cachedInterpretation;
+                // Check for sensitive questions and modify prompt accordingly
+                const sensitiveTopics = {
+                    death: /(when|how).*(die|death|dead)/i,
+                    health: /(health|illness|disease|sickness|medical)/i,
+                    harm: /(harm|hurt|injury|suicide|kill)/i
+                };
+
+                let modifiedQuestion = question;
+                let ethicalDisclaimer = "";
+
+                // Check if question contains sensitive topics
+                if (sensitiveTopics.death.test(question) || sensitiveTopics.health.test(question)) {
+                    ethicalDisclaimer = `Note: This reading is for entertainment purposes only and should not be taken as medical, legal, or professional advice. 
+                    Please consult appropriate professionals for guidance on health, medical, or life-critical matters.`;
+                    
+                    // Modify question to focus on spiritual guidance rather than specific predictions
+                    modifiedQuestion = question.replace(sensitiveTopics.death, "what spiritual lessons should I focus on")
+                                            .replace(sensitiveTopics.health, "what energies should I be mindful of regarding my wellbeing");
                 }
 
-                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                const prompt = `You are a wise and compassionate tarot reader who provides spiritual guidance while maintaining ethical boundaries. 
+                The seeker has drawn ${tarotCards[cardNumber]} in relation to: "${modifiedQuestion}"
+
+                ${ethicalDisclaimer}
+
+                Please provide an ethical and supportive interpretation that includes:
+
+                1. 🌟 Spiritual Wisdom: Share the deeper spiritual and archetypal meaning of ${tarotCards[cardNumber]}, focusing on personal growth and inner understanding.
+                2. 🔮 Mindful Guidance: Offer insights that empower the seeker to make conscious choices and maintain a positive outlook.
+                3. ✨ Practical Support: Suggest constructive actions and mindful practices that promote wellbeing and personal development.
+                4. 🌙 Positive Focus: Share uplifting perspectives that encourage hope and resilience.`;
+
+                const response = await fetch('/api/get-interpretation', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${apiKey}`
                     },
                     body: JSON.stringify({
-                        model: "gpt-4-turbo",
-                        messages: [{
-                            role: "user",
-                            content: prompt
-                        }],
-                        temperature: 0.7
+                        prompt,
+                        readingType
                     })
                 });
 
                 if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({}));
-                    console.error('API Error:', errorData);
-                    throw new Error(`API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
+                    throw new Error('Failed to get interpretation');
                 }
 
                 const data = await response.json();
-                let interpretation = data.choices[0].message.content;
-
-                // Add disclaimer for sensitive topics
-                if (ethicalDisclaimer) {
-                    interpretation = `⚠️ ${ethicalDisclaimer}\n\n${interpretation}`;
-                }
-                
-                // Cache the interpretation
-                sessionStorage.setItem(cacheKey, interpretation);
-                
-                return interpretation;
+                return data.interpretation;
             } catch (error) {
                 console.error('Error getting interpretation:', error);
-                throw new Error('Failed to get card interpretation. Please check your connection and try again.');
+                return 'I apologize, but I am unable to provide an interpretation at this moment. Please try again later.';
             }
         }
 
