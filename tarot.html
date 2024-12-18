@@ -155,7 +155,7 @@
             border-radius: 10px;
         }
 
-        .questions-section h2 {
+        .section-title {
             color: var(--gold-color);
             font-size: 1.8rem;
             margin-bottom: 1.5rem;
@@ -282,48 +282,37 @@
             box-shadow: 0 0 20px rgba(218, 165, 32, 0.2);
         }
 
-        .video-container {
-            background: rgba(0, 0, 0, 0.7);
-            padding: 2rem;
-            border-radius: 10px;
-            margin: 2rem 0;
-            width: 100%;
+        .video-section {
+            margin: 2rem auto;
             max-width: 800px;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
             border: 1px solid var(--gold-color);
         }
 
-        .video-container h2 {
+        .video-section h2 {
             color: var(--gold-color);
+            text-align: center;
             margin-bottom: 1.5rem;
             font-size: 1.8rem;
-            font-weight: 300;
-            letter-spacing: 2px;
         }
 
-        .video-wrapper {
+        .video-container {
             position: relative;
             padding-bottom: 56.25%; /* 16:9 aspect ratio */
             height: 0;
             overflow: hidden;
-            margin: 1rem 0;
+            border-radius: 10px;
         }
 
-        .video-wrapper iframe {
+        .video-container iframe {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             border: none;
-            border-radius: 5px;
-        }
-
-        .video-description {
-            color: #ccc;
-            font-size: 1rem;
-            line-height: 1.6;
-            margin-top: 1.5rem;
-            text-align: left;
         }
 
         @media (max-width: 768px) {
@@ -359,176 +348,356 @@
 
     <main class="main-content">
         <h1 class="page-title">INSTANT TAROT CARD READING</h1>
-        
+
         <div class="reading-section">
             <div class="client-info">
                 <h2>Personal Information</h2>
                 <p class="info-text">Please provide your details below. Your email address is required to receive your personalized PDF tarot reading directly to your inbox. All information is kept confidential and secure.</p>
                 
-                <div class="input-group">
-                    <label>Full Name<span class="required">*</span></label>
-                    <input type="text" class="client-input" id="client-name" required placeholder="Enter your full name">
-                </div>
-                
-                <div class="input-group">
-                    <label>Email Address<span class="required">*</span></label>
-                    <input type="email" class="client-input" id="client-email" required placeholder="Enter your email address">
-                </div>
-                
-                <div class="input-group">
-                    <label>Date of Birth<span class="required">*</span></label>
-                    <input type="date" class="client-input" id="client-birthdate" required>
-                </div>
-            </div>
-
-            <div class="video-container">
-                <h2>Understanding Your Tarot Reading</h2>
-                <div class="video-wrapper">
-                    <iframe 
-                        src="https://www.youtube.com/embed/sp2TLoYf66E" 
-                        title="Understanding Tarot Reading"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                        allowfullscreen>
-                    </iframe>
-                </div>
-                <p class="video-description">
-                    In this video, we explore the deep symbolism and meaning behind your tarot card reading. Learn how to 
-                    interpret the cards drawn for you and understand how they relate to your questions and life path. Our 
-                    expert reader guides you through the process of connecting with the cards' energy and applying their 
-                    wisdom to your situation.
-                </p>
-            </div>
-
-            <div class="questions-section">
-                <h2>Your Three Questions for the Cards</h2>
-                
-                <div class="question-group">
-                    <div class="question-input-wrapper">
-                        <label class="question-label">Question 1:</label>
-                        <input type="text" class="question-input" id="question1" placeholder="Enter your first question...">
+                <form id="tarotForm" onsubmit="return handleFormSubmit(event)">
+                    <div class="input-group">
+                        <label for="client-name">Full Name<span class="required">*</span></label>
+                        <input type="text" id="client-name" class="client-input" required>
                     </div>
-                    <div>
-                        <label class="question-label">Card Number:</label>
-                        <select class="card-number-select" id="card1">
-                            <option value="">Select</option>
-                            <script>
-                                for(let i = 1; i <= 78; i++) {
-                                    document.write(`<option value="${i}">${i}</option>`);
-                                }
-                            </script>
+                    
+                    <div class="input-group">
+                        <label for="client-email">Email Address<span class="required">*</span></label>
+                        <input type="email" id="client-email" class="client-input" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="client-birthdate">Date of Birth<span class="required">*</span></label>
+                        <input type="date" id="client-birthdate" class="client-input" required>
+                    </div>
+
+                    <div class="video-section">
+                        <h2>How to Ask the Right Questions</h2>
+                        <div class="video-container">
+                            <iframe 
+                                width="560" 
+                                height="315" 
+                                src="https://www.youtube.com/embed/sp2TLoYf66E?start=9"
+                                title="How to Ask Questions in Tarot Reading"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                    </div>
+
+                    <div class="questions-section">
+                        <h2>Your Three Questions for the Cards</h2>
+                        
+                        <div class="question-group">
+                            <div class="question-input-wrapper">
+                                <label class="question-label">Question 1:<span class="required">*</span></label>
+                                <input type="text" class="question-input" id="question1" required>
+                            </div>
+                            <div class="card-select-wrapper">
+                                <label class="question-label">Card Number:<span class="required">*</span></label>
+                                <select class="card-number-select" id="card1" required>
+                                    <option value="">Select a card</option>
+                                    <script>
+                                        for(let i = 1; i <= 78; i++) {
+                                            document.write(`<option value="${i}">${i}</option>`);
+                                        }
+                                    </script>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="question-group">
+                            <div class="question-input-wrapper">
+                                <label class="question-label">Question 2:<span class="required">*</span></label>
+                                <input type="text" class="question-input" id="question2" required>
+                            </div>
+                            <div class="card-select-wrapper">
+                                <label class="question-label">Card Number:<span class="required">*</span></label>
+                                <select class="card-number-select" id="card2" required>
+                                    <option value="">Select a card</option>
+                                    <script>
+                                        for(let i = 1; i <= 78; i++) {
+                                            document.write(`<option value="${i}">${i}</option>`);
+                                        }
+                                    </script>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="question-group">
+                            <div class="question-input-wrapper">
+                                <label class="question-label">Question 3:<span class="required">*</span></label>
+                                <input type="text" class="question-input" id="question3" required>
+                            </div>
+                            <div class="card-select-wrapper">
+                                <label class="question-label">Card Number:<span class="required">*</span></label>
+                                <select class="card-number-select" id="card3" required>
+                                    <option value="">Select a card</option>
+                                    <script>
+                                        for(let i = 1; i <= 78; i++) {
+                                            document.write(`<option value="${i}">${i}</option>`);
+                                        }
+                                    </script>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="reading-type-group">
+                        <h3>Choose Your Reading Type<span class="required">*</span></h3>
+                        <select id="reading-type" class="reading-type-select" required>
+                            <option value="">Select Reading Type</option>
+                            <option value="situation-action-outcome">Situation - Action - Outcome</option>
+                            <option value="past-present-future">Past - Present - Future</option>
+                            <option value="mind-body-spirit">Mind - Body - Spirit</option>
                         </select>
                     </div>
-                </div>
 
-                <div class="question-group">
-                    <div class="question-input-wrapper">
-                        <label class="question-label">Question 2:</label>
-                        <input type="text" class="question-input" id="question2" placeholder="Enter your second question...">
-                    </div>
-                    <div>
-                        <label class="question-label">Card Number:</label>
-                        <select class="card-number-select" id="card2">
-                            <option value="">Select</option>
-                            <script>
-                                for(let i = 1; i <= 78; i++) {
-                                    document.write(`<option value="${i}">${i}</option>`);
-                                }
-                            </script>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="question-group">
-                    <div class="question-input-wrapper">
-                        <label class="question-label">Question 3:</label>
-                        <input type="text" class="question-input" id="question3" placeholder="Enter your third question...">
-                    </div>
-                    <div>
-                        <label class="question-label">Card Number:</label>
-                        <select class="card-number-select" id="card3">
-                            <option value="">Select</option>
-                            <script>
-                                for(let i = 1; i <= 78; i++) {
-                                    document.write(`<option value="${i}">${i}</option>`);
-                                }
-                            </script>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="reading-type-group">
-                    <label class="reading-type-label">Select one of the following enigmatic realms to delve deeper into the mysteries of your life:</label>
-                    <select class="reading-type-select" id="reading-type">
-                        <option value="">Choose Your Realm</option>
-                        <option value="love">Love and Relationships</option>
-                        <option value="career">Career and Ambitions</option>
-                        <option value="health">Health and Well-being</option>
-                        <option value="spiritual">Spiritual Growth</option>
-                        <option value="personal">Personal Challenges</option>
-                    </select>
-                </div>
+                    <button type="submit" class="draw-button" id="submitButton">
+                        <span class="button-text">Enter into the Realm of Tarot</span>
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </form>
             </div>
-
-            <button class="draw-button">Enter the Realm of Tarot</button>
         </div>
-    </main>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const drawButton = document.querySelector('.draw-button');
-            
-            console.log('Draw button event listener attached');
-
-            drawButton.addEventListener('click', (e) => {
-                e.preventDefault();
-                console.log('Draw button clicked');
-
-                // Validate client information
-                const formData = {
-                    name: document.getElementById('client-name').value.trim(),
-                    email: document.getElementById('client-email').value.trim(),
-                    birthdate: document.getElementById('client-birthdate').value.trim(),
-                    question1: document.getElementById('question1').value.trim(),
-                    question2: document.getElementById('question2').value.trim(),
-                    question3: document.getElementById('question3').value.trim(),
-                    card1: document.getElementById('card1').value,
-                    card2: document.getElementById('card2').value,
-                    card3: document.getElementById('card3').value,
-                    readingType: document.getElementById('reading-type').value
-                };
-
-                console.log('Form Data:', formData);
-
-                // Check which fields are empty
-                const emptyFields = Object.entries(formData)
-                    .filter(([key, value]) => !value)
-                    .map(([key]) => key);
-
-                if (emptyFields.length > 0) {
-                    console.log('Empty fields:', emptyFields);
-                    alert(`Please fill in the following fields:\n${emptyFields.join('\n')}`);
-                    return;
-                }
-
-                // Validate email format
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(formData.email)) {
-                    console.log('Invalid email:', formData.email);
-                    alert('Please enter a valid email address.');
-                    return;
-                }
+        <script src="config.js"></script>
+        <script>
+            async function handleFormSubmit(event) {
+                event.preventDefault();
+                
+                // Disable submit button to prevent double submission
+                const submitButton = document.getElementById('submitButton');
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<span class="button-text">Preparing Your Reading...</span>';
 
                 try {
-                    // Prepare reading data
-                    const queryString = encodeURIComponent(JSON.stringify(formData));
-                    console.log('Redirecting to reading page with data');
-                    window.location.href = `reading.html?readingData=${queryString}`;
+                    // Get user information
+                    const userData = {
+                        name: document.getElementById('client-name').value.trim(),
+                        email: document.getElementById('client-email').value.trim(),
+                        birthdate: document.getElementById('client-birthdate').value,
+                        readingType: document.getElementById('reading-type').value,
+                        questions: [
+                            document.getElementById('question1').value.trim(),
+                            document.getElementById('question2').value.trim(),
+                            document.getElementById('question3').value.trim()
+                        ],
+                        selectedCards: [
+                            document.getElementById('card1').value,
+                            document.getElementById('card2').value,
+                            document.getElementById('card3').value
+                        ],
+                        readings: []
+                    };
+
+                    // Validate all required fields
+                    if (!userData.name || !userData.email || !userData.birthdate || !userData.readingType ||
+                        !userData.questions.every(q => q) || !userData.selectedCards.every(c => c)) {
+                        throw new Error('Please fill in all required fields');
+                    }
+
+                    console.log('Form data:', userData);
+
+                    // Get individual readings
+                    const readings = await Promise.all([
+                        getReading(userData.questions[0], userData.selectedCards[0], userData.name),
+                        getReading(userData.questions[1], userData.selectedCards[1], userData.name),
+                        getReading(userData.questions[2], userData.selectedCards[2], userData.name)
+                    ]);
+
+                    readings.forEach((reading, index) => {
+                        userData.readings.push({
+                            question: userData.questions[index],
+                            card: userData.selectedCards[index],
+                            reading: reading
+                        });
+                    });
+
+                    // Get realm reading
+                    const realmReading = await getRealmReading(userData.questions[0], userData.selectedCards, userData.name);
+                    userData.realmReading = realmReading;
+
+                    // Log the final data before redirect
+                    console.log('Final data:', userData);
+
+                    // Redirect to reading page
+                    const encodedData = encodeURIComponent(JSON.stringify(userData));
+                    window.location.href = `reading.html?readingData=${encodedData}`;
+
                 } catch (error) {
-                    console.error('Error preparing redirect:', error);
-                    alert('An error occurred while preparing your reading. Please try again.');
+                    console.error('Error:', error);
+                    alert(error.message || 'An error occurred while preparing your reading. Please try again.');
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = '<span class="button-text">Enter into the Realm of Tarot</span><i class="fas fa-moon"></i>';
                 }
-            });
-        });
-    </script>
+
+                return false; // Prevent form from submitting normally
+            }
+
+            async function getReading(question, card, userName) {
+                // Get the actual card name from the file naming structure
+                const cardName = getCardName(card).replace(/^The /, ''); // Remove 'The ' prefix if present
+                const firstName = userName.split(' ')[0]; // Get first name
+                
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${CONFIG.OPENAI_API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        model: "gpt-4",
+                        messages: [{
+                            role: "user",
+                            content: `You are a wise and experienced tarot reader with deep spiritual insight. ${firstName} has drawn the ${cardName} card in response to their question: "${question}".
+
+As you gaze into the mystical energies surrounding ${firstName}, interpret the ${cardName} card with the following aspects:
+
+1. Begin with a brief, mystical observation about the energy you sense around this card draw
+2. Describe the key symbols and imagery present in the ${cardName}, and their spiritual significance
+3. Explain how these symbols specifically relate to ${firstName}'s question
+4. Provide spiritual guidance and insights about potential paths forward
+5. End with a short, wise reflection or piece of advice that ${firstName} should meditate on
+
+Keep the tone mystical and wise, but also warm and personal. Speak directly to ${firstName} as if they are sitting across from you in a candlelit room filled with spiritual energy.`
+                        }],
+                        temperature: 0.7
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('API request failed');
+                }
+
+                const data = await response.json();
+                return data.choices[0].message.content;
+            }
+
+            async function getRealmReading(mainQuestion, cards, userName) {
+                const firstName = userName.split(' ')[0]; // Get first name
+                const cardNames = cards.map(card => getCardName(card).replace(/^The /, '')).join(', ');
+                
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${CONFIG.OPENAI_API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        model: "gpt-4",
+                        messages: [{
+                            role: "user",
+                            content: `You are a wise and experienced tarot reader with deep spiritual insight. ${firstName} has drawn three powerful cards: ${cardNames}. These cards have appeared together in response to their journey and their primary question: "${mainQuestion}".
+
+As you meditate on the mystical convergence of these cards, provide a holistic reading that:
+
+1. Begin with an observation about the overall energy pattern you sense in this spread
+2. Explore how these three cards interact and create a unique narrative for ${firstName}
+3. Identify any significant patterns, elements, or symbols that appear across multiple cards
+4. Explain how this combination of cards creates a deeper meaning for ${firstName}'s journey
+5. Provide spiritual guidance about the larger life path or cycle that ${firstName} is currently experiencing
+6. Close with a powerful insight or piece of wisdom that emerges from this unique combination
+
+Speak with the wisdom of the ages, but maintain a personal connection to ${firstName}. Your words should feel both ancient and intimately relevant to their current situation.`
+                        }],
+                        temperature: 0.7
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('API request failed');
+                }
+
+                const data = await response.json();
+                return data.choices[0].message.content;
+            }
+
+            function getCardName(cardNumber) {
+                const cardNames = {
+                    1: 'The Fool',
+                    2: 'The Magician',
+                    3: 'The High Priestess',
+                    4: 'The Empress',
+                    5: 'The Emperor',
+                    6: 'The Hierophant',
+                    7: 'The Lovers',
+                    8: 'The Chariot',
+                    9: 'Strength',
+                    10: 'The Hermit',
+                    11: 'Wheel of Fortune',
+                    12: 'Justice',
+                    13: 'The Hanged Man',
+                    14: 'Death',
+                    15: 'Temperance',
+                    16: 'The Devil',
+                    17: 'The Tower',
+                    18: 'TheStar',
+                    19: 'The Moon',
+                    20: 'The Sun',
+                    21: 'Judgment',
+                    22: 'The World',
+                    23: 'Ace of Wands',
+                    24: 'Two of Wands',
+                    25: 'Three of Wands',
+                    26: 'Four of Wands',
+                    27: 'Five of Wands',
+                    28: 'Six of Wands',
+                    29: 'seven of Wands',
+                    30: 'Eight of Wands',
+                    31: 'Nine of Wands',
+                    32: 'Ten of Wands',
+                    33: 'Page of Wands',
+                    34: 'Knight of Wands',
+                    35: 'Queen of Wands',
+                    36: 'King of Wands',
+                    37: 'Ace of Cups',
+                    38: 'Two of Cups',
+                    39: 'Three of Cups',
+                    40: 'Four of Cups',
+                    41: 'Five of Cups',
+                    42: 'Six of Cups',
+                    43: 'Seven of Cups',
+                    44: 'Eight of Cups',
+                    45: 'Nine of Cups',
+                    46: 'Ten of Cups',
+                    47: 'Page of Cups',
+                    48: 'Knight of Cups',
+                    49: 'Queen of Cups',
+                    50: 'King of Cups',
+                    51: 'Ace of Pentacles',
+                    52: 'Two of Pentacles',
+                    53: 'Three of Pentacles',
+                    54: 'Four of Pentacles',
+                    55: 'Five of Pentacles',
+                    56: 'Six of Pentacles',
+                    57: 'Seven of Pentacles',
+                    58: 'Eight of Pentacles',
+                    59: 'Nine of Pentacles',
+                    60: 'Ten of Pentacles',
+                    61: 'Page of Pentacles',
+                    62: 'Knight of Pentacles',
+                    63: 'Queen of Pentacles',
+                    64: 'King of Pentacles',
+                    65: 'Ace of Swords',
+                    66: 'Two of Swords',
+                    67: 'Three of Swords',
+                    68: 'Four of Swords',
+                    69: 'Five of Swords',
+                    70: 'Six of Swords',
+                    71: 'Seven of Swords',
+                    72: 'Eight of Swords',
+                    73: 'Nine of Swords',
+                    74: 'Ten of Swords',
+                    75: 'Page of Swords',
+                    76: 'Knight of Swords',
+                    77: 'Queen of Swords',
+                    78: 'King of Swords'
+                };
+                return cardNames[cardNumber] || `Card ${cardNumber}`;
+            }
+        </script>
+    </main>
+
 </body>
 </html>
