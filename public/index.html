@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instant Tarot Card Reading</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --gold-color: #D4AF37;
+            --text-color: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #000000;
+            color: var(--text-color);
+            line-height: 1.6;
+            background-image: url('/images/pdf-background.jpg');
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .background-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1;
+        }
+
+        .main-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-title {
+            text-align: center;
+            color: var(--gold-color);
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .reading-section {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+        }
+
+        .client-info h2 {
+            color: var(--gold-color);
+            margin-bottom: 1rem;
+        }
+
+        .info-text {
+            margin-bottom: 2rem;
+            color: #ccc;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--gold-color);
+        }
+
+        .required {
+            color: #ff4444;
+            margin-left: 0.25rem;
+        }
+
+        .client-input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--gold-color);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border-radius: 4px;
+        }
+
+        .client-input:focus {
+            outline: none;
+            border-color: #fff;
+            box-shadow: 0 0 5px rgba(212, 175, 55, 0.5);
+        }
+
+        .questions-section {
+            margin-top: 2rem;
+        }
+
+        .question-group {
+            margin-top: 1rem;
+        }
+
+        .submit-button {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            margin-top: 2rem;
+            background-color: var(--gold-color);
+            color: black;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .submit-button:hover {
+            background-color: #B4941F;
+        }
+
+        .submit-button:disabled {
+            background-color: #666;
+            cursor: not-allowed;
+        }
+
+        #loadingSpinner {
+            display: none;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--gold-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #errorMessage {
+            color: #ff4444;
+            margin-top: 1rem;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-overlay"></div>
+    
+    <main class="main-content">
+        <h1 class="page-title">INSTANT TAROT CARD READING</h1>
+
+        <div class="reading-section">
+            <div class="client-info">
+                <h2>Personal Information</h2>
+                <p class="info-text">Please provide your details below. Your email address is required to receive your personalized tarot reading directly to your inbox. All information is kept confidential and secure.</p>
+                
+                <form id="tarotForm">
+                    <div class="input-group">
+                        <label for="client-name">Full Name<span class="required">*</span></label>
+                        <input type="text" id="client-name" class="client-input" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="client-email">Email Address<span class="required">*</span></label>
+                        <input type="email" id="client-email" class="client-input" required>
+                    </div>
+
+                    <div class="questions-section">
+                        <h2>Your Three Questions for the Cards</h2>
+                        
+                        <div class="question-group">
+                            <div class="input-group">
+                                <label for="question1">Question 1<span class="required">*</span></label>
+                                <input type="text" id="question1" class="client-input" required
+                                    placeholder="What would you like to know?">
+                            </div>
+
+                            <div class="input-group">
+                                <label for="question2">Question 2<span class="required">*</span></label>
+                                <input type="text" id="question2" class="client-input" required
+                                    placeholder="Ask your second question">
+                            </div>
+
+                            <div class="input-group">
+                                <label for="question3">Question 3<span class="required">*</span></label>
+                                <input type="text" id="question3" class="client-input" required
+                                    placeholder="Ask your final question">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-button">Get Your Reading</button>
+                </form>
+
+                <div id="loadingSpinner">
+                    <div class="spinner"></div>
+                    <p>Consulting the cards...</p>
+                </div>
+
+                <div id="errorMessage"></div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.getElementById('tarotForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            const submitButton = document.querySelector('.submit-button');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Hide any previous error messages
+            errorMessage.style.display = 'none';
+            
+            // Disable submit button and show loading spinner
+            submitButton.disabled = true;
+            loadingSpinner.style.display = 'block';
+            
+            try {
+                const formData = {
+                    name: document.getElementById('client-name').value,
+                    email: document.getElementById('client-email').value,
+                    questions: [
+                        document.getElementById('question1').value,
+                        document.getElementById('question2').value,
+                        document.getElementById('question3').value
+                    ]
+                };
+
+                const response = await fetch('/api/reading', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to get reading');
+                }
+
+                // Handle successful reading
+                window.location.href = `/reading.html?id=${data.reading.timestamp}`;
+            } catch (error) {
+                console.error('Error:', error);
+                errorMessage.textContent = error.message || 'Something went wrong. Please try again.';
+                errorMessage.style.display = 'block';
+            } finally {
+                // Re-enable submit button and hide loading spinner
+                submitButton.disabled = false;
+                loadingSpinner.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
