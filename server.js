@@ -156,10 +156,10 @@ app.use((err, req, res, next) => {
 });
 
 // Get port from environment variable or use 3000 as default
-const port = process.env.PORT || 3000;
+const port = parseInt(process.env.PORT || '3000', 10);
 
 // Start server
-app.listen(port, '0.0.0.0', () => {
+app.listen(port, () => {
     console.log('==================================');
     console.log(`Server is running on port ${port}`);
     console.log(`Environment: ${process.env.NODE_ENV}`);
