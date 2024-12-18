@@ -403,12 +403,11 @@
                 // Get reading type from session storage
                 const readingType = sessionStorage.getItem('readingType') || 'Personal Reading';
 
-                // Store client info in session storage
-                const clientInfo = { name, email, birthdate };
-                sessionStorage.setItem('clientInfo', JSON.stringify(clientInfo));
-
-                // Create reading data
+                // Create reading data object
                 const readingData = {
+                    name,
+                    email,
+                    birthdate,
                     readingType,
                     card1,
                     card2,
@@ -418,8 +417,12 @@
                     question3: "What opportunities are coming my way?"
                 };
 
-                // Redirect to reading page with data
-                window.location.href = `reading.html?readingData=${encodeURIComponent(JSON.stringify(readingData))}`;
+                // Convert to URL-safe string
+                const readingDataStr = encodeURIComponent(JSON.stringify(readingData));
+                
+                // Redirect to reading page
+                window.location.href = `reading.html?data=${readingDataStr}`;
+
             } catch (error) {
                 console.error('Error preparing reading:', error);
                 alert('There was an error preparing your reading. Please try again.');

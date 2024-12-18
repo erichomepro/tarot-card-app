@@ -591,43 +591,34 @@ Speak with the ancient wisdom of the ${realm} realm, as if you're channeling its
         // Initialize the page
         window.onload = async function() {
             try {
-                // Get reading data from URL and client info from sessionStorage
+                // Get reading data from URL
                 const params = new URLSearchParams(window.location.search);
-                const readingDataParam = params.get('readingData');
-                const clientInfoStr = sessionStorage.getItem('clientInfo');
+                const encodedData = params.get('data');
 
-                if (!readingDataParam) {
+                if (!encodedData) {
                     throw new Error('No reading data found. Please start a new reading.');
                 }
 
-                if (!clientInfoStr) {
-                    throw new Error('No client information found. Please start a new reading.');
-                }
-
                 let readingData;
-                let clientInfo;
-
                 try {
-                    readingData = JSON.parse(decodeURIComponent(readingDataParam));
-                    clientInfo = JSON.parse(clientInfoStr);
+                    readingData = JSON.parse(decodeURIComponent(encodedData));
                 } catch (parseError) {
                     console.error('Error parsing data:', parseError);
                     throw new Error('Invalid reading data format. Please start a new reading.');
                 }
 
                 // Validate required data
-                if (!readingData.readingType || !readingData.card1 || !readingData.card2 || !readingData.card3) {
-                    throw new Error('Missing required reading information. Please start a new reading.');
-                }
-
-                if (!clientInfo.name || !clientInfo.email) {
-                    throw new Error('Missing required client information. Please start a new reading.');
+                const requiredFields = ['name', 'email', 'birthdate', 'readingType', 'card1', 'card2', 'card3'];
+                for (const field of requiredFields) {
+                    if (!readingData[field]) {
+                        throw new Error(`Missing required field: ${field}. Please start a new reading.`);
+                    }
                 }
 
                 // Update reading info
                 document.getElementById('readingType').textContent = readingData.readingType;
                 document.getElementById('readingDate').textContent = formatDate(new Date());
-                document.getElementById('clientName').textContent = clientInfo.name;
+                document.getElementById('clientName').textContent = readingData.name;
 
                 // Create reading sections
                 const questions = [
@@ -668,7 +659,7 @@ Speak with the ancient wisdom of the ${realm} realm, as if you're channeling its
                 }
 
                 // Save reading to file
-                await saveReadingToFile(clientInfo, readingData, questions, interpretations, realmInterpretation);
+                await saveReadingToFile(readingData, questions, interpretations, realmInterpretation);
 
                 // Add card flip animation on scroll
                 const cards = document.querySelectorAll('.card');
@@ -688,10 +679,10 @@ Speak with the ancient wisdom of the ${realm} realm, as if you're channeling its
         };
 
         // Function to save reading to file
-        async function saveReadingToFile(clientInfo, readingData, questions, interpretations, realmInterpretation) {
+        async function saveReadingToFile(readingData, questions, interpretations, realmInterpretation) {
             try {
                 const currentDate = new Date();
-                const fileName = `${clientInfo.name.replace(/[^a-z0-9]/gi, '_')}_${currentDate.toISOString().split('T')[0]}.txt`;
+                const fileName = `${readingData.name.replace(/[^a-z0-9]/gi, '_')}_${currentDate.toISOString().split('T')[0]}.txt`;
                 const filePath = `readings/${fileName}`;
 
                 const readingContent = `
@@ -701,9 +692,9 @@ Date: ${formatDate(currentDate)}
 
 Client Information
 -----------------
-Name: ${clientInfo.name}
-Email: ${clientInfo.email}
-Date of Birth: ${clientInfo.dob}
+Name: ${readingData.name}
+Email: ${readingData.email}
+Date of Birth: ${readingData.birthdate}
 
 Reading Type: ${readingData.readingType}
 
