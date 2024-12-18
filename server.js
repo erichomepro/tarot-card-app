@@ -6,7 +6,10 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname)));
+
+// Serve static files from the images directory
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 // Basic health check endpoint
 app.get('/health', (req, res) => {
@@ -74,9 +77,14 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Serve reading.html for the reading route
+// Serve reading.html
 app.get('/reading', (req, res) => {
     res.sendFile(path.join(__dirname, 'reading.html'));
+});
+
+// Serve tarot.html
+app.get('/tarot', (req, res) => {
+    res.sendFile(path.join(__dirname, 'tarot.html'));
 });
 
 // Handle client data
