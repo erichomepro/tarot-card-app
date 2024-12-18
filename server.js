@@ -1,5 +1,6 @@
 const express = require('express');
-const fs = require('fs').promises;
+const fs = require('fs');  
+const fsPromises = require('fs').promises;  
 const path = require('path');
 const fetch = require('node-fetch');
 const app = express();
@@ -109,12 +110,12 @@ app.post('/api/save-reading', async (req, res) => {
         // Ensure readings directory exists
         const readingsDir = path.join(__dirname, 'readings');
         try {
-            await fs.access(readingsDir);
+            await fsPromises.access(readingsDir);
         } catch {
-            await fs.mkdir(readingsDir, { recursive: true });
+            await fsPromises.mkdir(readingsDir, { recursive: true });
         }
         
-        await fs.writeFile(filePath, JSON.stringify(readingData, null, 2));
+        await fsPromises.writeFile(filePath, JSON.stringify(readingData, null, 2));
         console.log('Reading saved to:', filePath);
         
         res.json({ 
