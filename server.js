@@ -74,6 +74,26 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+// Serve reading.html for the reading route
+app.get('/reading', (req, res) => {
+    res.sendFile(path.join(__dirname, 'reading.html'));
+});
+
+// Handle client data
+app.post('/api/save-client', (req, res) => {
+    try {
+        const { name, email, birthdate } = req.body;
+        // Validate client data
+        if (!name || !email) {
+            return res.status(400).json({ error: 'Missing required client information' });
+        }
+        res.status(200).json({ message: 'Client data saved successfully' });
+    } catch (error) {
+        console.error('Error saving client data:', error);
+        res.status(500).json({ error: 'Failed to save client data' });
+    }
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);

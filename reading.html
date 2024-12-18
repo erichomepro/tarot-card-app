@@ -591,15 +591,22 @@ Speak with the ancient wisdom of the ${realm} realm, as if you're channeling its
         // Initialize the page
         window.onload = async function() {
             try {
-                // Get reading data from URL
+                // Get reading data from URL and client info from sessionStorage
                 const params = new URLSearchParams(window.location.search);
-                const readingData = JSON.parse(decodeURIComponent(params.get('readingData')));
-                const clientInfo = JSON.parse(sessionStorage.getItem('clientInfo'));
+                const readingDataParam = params.get('readingData');
+                const clientInfoStr = sessionStorage.getItem('clientInfo');
+
+                if (!readingDataParam || !clientInfoStr) {
+                    throw new Error('Missing reading data or client information');
+                }
+
+                const readingData = JSON.parse(decodeURIComponent(readingDataParam));
+                const clientInfo = JSON.parse(clientInfoStr);
 
                 // Update reading info
-                document.getElementById('readingType').textContent = readingData.readingType;
+                document.getElementById('readingType').textContent = readingData.readingType || 'Personal Reading';
                 document.getElementById('readingDate').textContent = formatDate(new Date());
-                document.getElementById('clientName').textContent = clientInfo.name;
+                document.getElementById('clientName').textContent = clientInfo.name || 'Anonymous';
 
                 // Create reading sections
                 const questions = [
