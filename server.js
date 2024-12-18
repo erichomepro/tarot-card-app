@@ -1,19 +1,33 @@
 const express = require('express');
 const fs = require('fs').promises;
 const path = require('path');
-const fetch = require('node-fetch'); // Add this line to import fetch
+const fetch = require('node-fetch');
 const app = express();
 
 // Middleware
 app.use(express.json());
-app.use(express.static(path.join(__dirname)));
 
-// Serve static files from the images directory
+// Serve static files
+app.use(express.static(path.join(__dirname, 'public')));
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
 // Basic health check endpoint
 app.get('/health', (req, res) => {
     res.status(200).json({ status: 'ok' });
+});
+
+// Serve index.html for root route
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// Serve other HTML files
+app.get('/reading', (req, res) => {
+    res.sendFile(path.join(__dirname, 'reading.html'));
+});
+
+app.get('/tarot', (req, res) => {
+    res.sendFile(path.join(__dirname, 'tarot.html'));
 });
 
 // OpenAI interpretation endpoint
@@ -70,21 +84,6 @@ app.post('/save-reading', async (req, res) => {
         console.error('Error saving reading:', error);
         res.status(500).json({ error: 'Failed to save reading' });
     }
-});
-
-// Serve index.html for the root route
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-// Serve reading.html
-app.get('/reading', (req, res) => {
-    res.sendFile(path.join(__dirname, 'reading.html'));
-});
-
-// Serve tarot.html
-app.get('/tarot', (req, res) => {
-    res.sendFile(path.join(__dirname, 'tarot.html'));
 });
 
 // Handle client data
