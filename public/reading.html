@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Tarot Reading</title>
+    <title>Your Tarot Reading - Tarot Card Tube</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
             --gold-color: #D4AF37;
@@ -36,6 +37,27 @@
             height: 100%;
             background: rgba(0, 0, 0, 0.7);
             z-index: 1;
+        }
+
+        .header {
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 100;
+        }
+
+        .logo img {
+            height: 65px;
+            width: auto;
+            opacity: 1;
+            transition: transform 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .logo:hover img {
+            transform: scale(1.1);
         }
 
         .reading-container {
@@ -113,6 +135,29 @@
         .interpretation {
             color: #fff;
             line-height: 1.8;
+            white-space: pre-line;
+        }
+
+        .realm-reading {
+            margin-top: 3rem;
+            padding: 2rem;
+            border: 2px solid var(--gold-color);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .realm-reading h2 {
+            color: var(--gold-color);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+
+        .realm-interpretation {
+            color: #fff;
+            line-height: 1.8;
+            text-align: justify;
+            white-space: pre-line;
         }
 
         .back-button {
@@ -161,10 +206,16 @@
 <body>
     <div class="background-overlay"></div>
     
+    <header class="header">
+        <a href="/" class="logo">
+            <img src="/images/logo.png" alt="Tarot Card Tube Logo">
+        </a>
+    </header>
+    
     <div class="reading-container">
         <div id="loadingSpinner">
             <div class="spinner"></div>
-            <p>Loading your reading...</p>
+            <p>Consulting the cards...</p>
         </div>
 
         <div id="errorMessage"></div>
@@ -177,33 +228,25 @@
             
             <div id="readingSections"></div>
             
+            <div id="realmReading" class="realm-reading">
+                <h2>The Realm's Message</h2>
+                <div class="realm-interpretation"></div>
+            </div>
+            
             <a href="/" class="back-button">Get Another Reading</a>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', async function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const readingId = urlParams.get('id');
+        document.addEventListener('DOMContentLoaded', function() {
+            const readingData = JSON.parse(sessionStorage.getItem('readingData'));
             
-            if (!readingId) {
-                showError('No reading ID provided');
+            if (!readingData) {
+                showError('No reading data found. Please start a new reading.');
                 return;
             }
 
-            try {
-                const response = await fetch(`/api/reading/${readingId}`);
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.error || 'Failed to load reading');
-                }
-
-                displayReading(data.reading);
-            } catch (error) {
-                console.error('Error:', error);
-                showError(error.message || 'Failed to load reading');
-            }
+            displayReading(readingData);
         });
 
         function displayReading(reading) {
@@ -226,13 +269,15 @@
                         <div class="card-details">
                             <div class="card-name">${item.card.name}</div>
                             <div class="card-position">${item.card.position}</div>
-                            <div class="interpretation">${item.card.interpretation}</div>
+                            <div class="interpretation">${item.interpretation}</div>
                         </div>
                     </div>
                 `;
 
                 readingSections.appendChild(section);
             });
+
+            document.querySelector('.realm-interpretation').textContent = reading.realmReading;
 
             document.getElementById('loadingSpinner').style.display = 'none';
             document.getElementById('readingContent').style.display = 'block';

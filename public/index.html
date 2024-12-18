@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Instant Tarot Card Reading</title>
+    <title>Instant Tarot Card Reading - Tarot Card Tube</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -38,6 +38,27 @@
             height: 100%;
             background: rgba(0, 0, 0, 0.7);
             z-index: 1;
+        }
+
+        .header {
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 100;
+        }
+
+        .logo img {
+            height: 65px;
+            width: auto;
+            opacity: 1;
+            transition: transform 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .logo:hover img {
+            transform: scale(1.1);
         }
 
         .main-content {
@@ -103,15 +124,28 @@
             box-shadow: 0 0 5px rgba(212, 175, 55, 0.5);
         }
 
-        .questions-section {
+        .reading-type-select {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--gold-color);
+            color: white;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+
+        .reading-type-select option {
+            background-color: #000;
+            color: white;
+        }
+
+        .reading-type-group {
             margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(218, 165, 32, 0.3);
         }
 
-        .question-group {
-            margin-top: 1rem;
-        }
-
-        .submit-button {
+        .draw-button {
             display: block;
             width: 100%;
             padding: 1rem;
@@ -122,16 +156,28 @@
             border-radius: 4px;
             font-size: 1.1rem;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .submit-button:hover {
+        .draw-button:hover {
             background-color: #B4941F;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
         }
 
-        .submit-button:disabled {
+        .draw-button:disabled {
             background-color: #666;
             cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .draw-button i {
+            font-size: 1.2rem;
         }
 
         #loadingSpinner {
@@ -161,11 +207,38 @@
             text-align: center;
             display: none;
         }
+
+        .card-selection {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .card-select {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--gold-color);
+            color: white;
+            border-radius: 4px;
+        }
+
+        .card-select option {
+            background-color: #000;
+            color: white;
+        }
     </style>
 </head>
 <body>
     <div class="background-overlay"></div>
     
+    <header class="header">
+        <a href="/" class="logo">
+            <img src="/images/logo.png" alt="Tarot Card Tube Logo">
+        </a>
+    </header>
+
     <main class="main-content">
         <h1 class="page-title">INSTANT TAROT CARD READING</h1>
 
@@ -185,6 +258,11 @@
                         <input type="email" id="client-email" class="client-input" required>
                     </div>
 
+                    <div class="input-group">
+                        <label for="client-birthdate">Date of Birth<span class="required">*</span></label>
+                        <input type="date" id="client-birthdate" class="client-input" required>
+                    </div>
+
                     <div class="questions-section">
                         <h2>Your Three Questions for the Cards</h2>
                         
@@ -195,10 +273,24 @@
                                     placeholder="What would you like to know?">
                             </div>
 
+                            <div class="card-selection">
+                                <select id="card1" class="card-select" required>
+                                    <option value="">Select Card 1</option>
+                                    <!-- Card options will be populated by JavaScript -->
+                                </select>
+                            </div>
+
                             <div class="input-group">
                                 <label for="question2">Question 2<span class="required">*</span></label>
                                 <input type="text" id="question2" class="client-input" required
                                     placeholder="Ask your second question">
+                            </div>
+
+                            <div class="card-selection">
+                                <select id="card2" class="card-select" required>
+                                    <option value="">Select Card 2</option>
+                                    <!-- Card options will be populated by JavaScript -->
+                                </select>
                             </div>
 
                             <div class="input-group">
@@ -206,10 +298,29 @@
                                 <input type="text" id="question3" class="client-input" required
                                     placeholder="Ask your final question">
                             </div>
+
+                            <div class="card-selection">
+                                <select id="card3" class="card-select" required>
+                                    <option value="">Select Card 3</option>
+                                    <!-- Card options will be populated by JavaScript -->
+                                </select>
+                            </div>
                         </div>
                     </div>
 
-                    <button type="submit" class="submit-button">Get Your Reading</button>
+                    <div class="reading-type-group">
+                        <label for="reading-type">Reading Type<span class="required">*</span></label>
+                        <select id="reading-type" class="reading-type-select" required>
+                            <option value="">Select Reading Type</option>
+                            <option value="past-present-future">Past - Present - Future</option>
+                            <option value="mind-body-spirit">Mind - Body - Spirit</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="draw-button" id="submitButton">
+                        <span class="button-text">Enter into the Realm of Tarot</span>
+                        <i class="fas fa-moon"></i>
+                    </button>
                 </form>
 
                 <div id="loadingSpinner">
@@ -223,10 +334,38 @@
     </main>
 
     <script>
+        // Populate card selects with options
+        function populateCardSelects() {
+            const cardNames = {
+                1: 'The Fool', 2: 'The Magician', 3: 'The High Priestess',
+                4: 'The Empress', 5: 'The Emperor', 6: 'The Hierophant',
+                7: 'The Lovers', 8: 'The Chariot', 9: 'Strength',
+                10: 'The Hermit', 11: 'Wheel of Fortune', 12: 'Justice',
+                13: 'The Hanged Man', 14: 'Death', 15: 'Temperance',
+                16: 'The Devil', 17: 'The Tower', 18: 'The Star',
+                19: 'The Moon', 20: 'The Sun', 21: 'Judgment',
+                22: 'The World'
+            };
+
+            const selects = ['card1', 'card2', 'card3'];
+            selects.forEach(selectId => {
+                const select = document.getElementById(selectId);
+                Object.entries(cardNames).forEach(([value, name]) => {
+                    const option = document.createElement('option');
+                    option.value = value;
+                    option.textContent = name;
+                    select.appendChild(option);
+                });
+            });
+        }
+
+        // Call the function when the page loads
+        document.addEventListener('DOMContentLoaded', populateCardSelects);
+
         document.getElementById('tarotForm').addEventListener('submit', async function(event) {
             event.preventDefault();
             
-            const submitButton = document.querySelector('.submit-button');
+            const submitButton = document.querySelector('.draw-button');
             const loadingSpinner = document.getElementById('loadingSpinner');
             const errorMessage = document.getElementById('errorMessage');
             
@@ -241,10 +380,17 @@
                 const formData = {
                     name: document.getElementById('client-name').value,
                     email: document.getElementById('client-email').value,
+                    birthdate: document.getElementById('client-birthdate').value,
+                    readingType: document.getElementById('reading-type').value,
                     questions: [
                         document.getElementById('question1').value,
                         document.getElementById('question2').value,
                         document.getElementById('question3').value
+                    ],
+                    selectedCards: [
+                        document.getElementById('card1').value,
+                        document.getElementById('card2').value,
+                        document.getElementById('card3').value
                     ]
                 };
 
@@ -262,8 +408,11 @@
                     throw new Error(data.error || 'Failed to get reading');
                 }
 
-                // Handle successful reading
-                window.location.href = `/reading.html?id=${data.reading.timestamp}`;
+                // Store reading data in sessionStorage
+                sessionStorage.setItem('readingData', JSON.stringify(data.reading));
+                
+                // Redirect to reading page
+                window.location.href = '/reading.html';
             } catch (error) {
                 console.error('Error:', error);
                 errorMessage.textContent = error.message || 'Something went wrong. Please try again.';
