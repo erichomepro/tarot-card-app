@@ -1,21 +1,42 @@
 const express = require('express');
 const fs = require('fs').promises;
 const path = require('path');
-const fetch = require('node-fetch'); // Add this line to import fetch
+const fetch = require('node-fetch');
+require('dotenv').config();
+
 const app = express();
 
 // Middleware
 app.use(express.json());
-app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname)));
 
 // Basic health check endpoint
 app.get('/health', (req, res) => {
     res.status(200).json({ status: 'ok' });
 });
 
+// Serve index.html for root route
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// Serve reading.html
+app.get('/reading', (req, res) => {
+    res.sendFile(path.join(__dirname, 'reading.html'));
+});
+
+// Serve reading.html with query parameters
+app.get('/reading.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'reading.html'));
+});
+
 // OpenAI interpretation endpoint
 app.post('/api/get-interpretation', async (req, res) => {
     try {
+        if (!process.env.OPENAI_API_KEY) {
+            throw new Error('OpenAI API key is not configured');
+        }
+
         const { prompt, readingType } = req.body;
         
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -35,14 +56,16 @@ app.post('/api/get-interpretation', async (req, res) => {
         });
 
         if (!response.ok) {
-            throw new Error('OpenAI API error');
+            const errorData = await response.json().catch(() => ({}));
+            console.error('OpenAI API Error:', errorData);
+            throw new Error(`OpenAI API error: ${response.status}`);
         }
 
         const data = await response.json();
         res.json({ interpretation: data.choices[0].message.content });
     } catch (error) {
         console.error('Error in get-interpretation:', error);
-        res.status(500).json({ error: 'Failed to get interpretation' });
+        res.status(500).json({ error: 'Failed to get interpretation: ' + error.message });
     }
 });
 
@@ -69,16 +92,6 @@ app.post('/save-reading', async (req, res) => {
     }
 });
 
-// Serve index.html for the root route
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-// Serve reading.html for the reading route
-app.get('/reading', (req, res) => {
-    res.sendFile(path.join(__dirname, 'reading.html'));
-});
-
 // Handle client data
 app.post('/api/save-client', (req, res) => {
     try {
@@ -97,11 +110,12 @@ app.post('/api/save-client', (req, res) => {
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).json({ error: 'Something broke!' });
+    res.status(500).json({ error: 'Something broke!', details: err.message });
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
     console.log(`Environment: ${process.env.NODE_ENV}`);
+    console.log(`OpenAI API Key configured: ${!!process.env.OPENAI_API_KEY}`);
 });
