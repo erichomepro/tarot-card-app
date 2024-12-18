@@ -14,8 +14,19 @@ app.use((req, res, next) => {
     next();
 });
 
-// Serve static files from root directory
-app.use(express.static(path.join(__dirname), {
+// Serve static files from root directory with detailed logging
+app.use((req, res, next) => {
+    if (req.url.includes('/images/')) {
+        console.log('Image request:', {
+            url: req.url,
+            path: path.join(__dirname, req.url),
+            exists: fs.existsSync(path.join(__dirname, req.url))
+        });
+    }
+    next();
+});
+
+app.use(express.static(__dirname, {
     setHeaders: (res, filePath) => {
         if (filePath.endsWith('.jpg') || filePath.endsWith('.png')) {
             res.set('Cache-Control', 'public, max-age=31536000');
@@ -155,6 +166,19 @@ app.listen(port, '0.0.0.0', () => {
         const imageFiles = fs.readdirSync(imagesDir);
         console.log('\nImages directory contents:');
         console.log(JSON.stringify(imageFiles, null, 2));
+
+        // Log specific image paths
+        console.log('\nChecking specific image files:');
+        const imagesToCheck = [
+            './images/pdf-background.jpg',
+            './images/logo.png',
+            './images/tarot-card (2).jpg',
+            './images/horoscope (2).jpg'
+        ];
+        imagesToCheck.forEach(imgPath => {
+            const fullPath = path.join(__dirname, imgPath);
+            console.log(`${imgPath}: ${fs.existsSync(fullPath) ? 'exists' : 'missing'}`);
+        });
     } catch (err) {
         console.error('Error listing directory:', err);
     }
